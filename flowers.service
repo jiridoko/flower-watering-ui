@@ -1,0 +1,12 @@
+[Unit]
+Description=Flower monitoring daemon
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/flower_ui
+ExecStart=/opt/flower_ui/flowers.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
