@@ -9,24 +9,28 @@ from flask import render_template
 from threading import Thread
 import sys
 import serial
+import Adafruit_ADS1x15
 
 class moisture(Thread):
     def __init__(self):
         super(moisture, self).__init__()
-        #self.serial = serial.Serial('/dev/ttyUSB0', 9600)
-        #time.sleep(2)
+        self.adc = None
+        self.init_adc()
         self.raspberry=0
         self.currant=0
         self.read()
+    def init_adc(self):
+        self.adc = Adafruit_ADS1x15.ADS1115()
     def read(self):
-        #self.serial.write(b'R')
-        time.sleep(0.1)
-        #self.raspberry = int(self.serial.readline().decode('utf-8').split()[1])
-        #self.currant = int(self.serial.readline().decode('utf-8').split()[1])
+        try:
+            self.raspberry = int(self.adc.read_adc(0, gain=1, data_rate=128))
+            self.currant = int(self.adc.read_adc(1, gain=1, data_rate=128))
+        except OSError:
+            self.init_adc()
     def run(self):
         while True:
             self.read()
-            time.sleep(3)
+            time.sleep(2)
     def get_raspberry(self):
         return self.raspberry
     def get_currant(self):
